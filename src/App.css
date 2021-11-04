@@ -1,38 +1,70 @@
 .App {
   text-align: center;
+  height: 95vh;
+  width: 100%;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.App h1 {
+  color: tomato;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.canvas {
+  overflow: hidden;
+  position: relative;
+  margin: 0 5%;
+  border-radius: 10px;
+  width: 90%;
+  height: 80%;
+  border: 2px solid tomato;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.sticky-note {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: column;
+  color: aliceblue;
+  position: absolute;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 10px;
+}
+.header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 20%;
+  width: 100%;
+  border-bottom: 1px solid white;
+}
+.header input {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 10px;
+  border: none;
+  padding: 0.2rem;
+}
+.header i {
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
+.body {
+  height: 80%;
+}
+.sticky-note textarea {
+  width: 90%;
+  height: 90%;
+  background-color: transparent;
+  color: aliceblue;
+  border: 1px solid aliceblue;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  outline: none;
+  text-align: center;
+}
+.button {
+  cursor: pointer;
+  border: 2px solid tomato;
+  background-color: aliceblue;
+  color: tomato;
+  border-radius: 10px;
+  margin: 0 1rem 1rem 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
