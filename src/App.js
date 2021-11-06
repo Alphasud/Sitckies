@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import db from './fireBaseConfig';
 import StickyNote from './Components/StickyNote';
 import './App.css';
+import DrawingArea from './Components/DrawingArea';
 
 function App() {
 
   const [notes, setNotes] = useState([]);
   const [updatedNotes, setUpdatedNotes] = useState([]);
   const [isSaved, setIsSaved] = useState(false);
+  const [isPaint, setIsPaint] = useState(false);
+  const [isErased, setIsErased] = useState(false);
   const [background, setBackground] = useState();
   const [updatedBackground, setUpdatedBackground] = useState('');
   const [isBackgroundAdded, setIsbackgroundAdded] = useState(false);
@@ -138,10 +141,12 @@ function App() {
   return (
     <div className="App">
       <h1>Welcome to Stickies !</h1>
-      <button className="button" onClick={handleSave}>Save my sticker board</button>
-      <button className="button" onClick={handleCreateSticker}>Add a new sticker</button>
-      <button className="button" onClick={handleClearAll}>Clear canvas</button>
-      <button className="button" onClick={() => setIsbackgroundAdded(true)}>Add Background Image to Canvas</button>
+      <i className="fas fa-trash-alt brush" onMouseDown={() => setIsErased(true)} onMouseUp={() => setIsErased(false)}></i>
+      <i className={isPaint ? "fas fa-paint-brush brush" : "fas fa-eraser brush"} onClick={() => setIsPaint(!isPaint)}></i>
+      <button className="button" onClick={handleSave}><i class="far fa-save"></i> Save my sticker board</button>
+      <button className="button" onClick={handleCreateSticker}><i class="fas fa-sticky-note"></i> Add a new sticker</button>
+      <button className="button" onClick={handleClearAll}><i className="fas fa-trash-alt"></i> Clear canvas</button>
+      <button className="button" onClick={() => setIsbackgroundAdded(true)}><i class="fas fa-images"></i> Add Background Image to Canvas</button>
       {isSaved ? <div className='save-msg'>
         <i className="fas fa-times" onClick={() => setIsSaved(false)}></i>
         Canvas Successfully Saved !
@@ -153,8 +158,10 @@ function App() {
         <button className='button' onClick={() => { setStyle({ backgroundImage: `url(${updatedBackground})` }); setIsbackgroundAdded(false)}}>OKAY!</button>
       </div> : null}
       <div className="canvas" style={style}>
+        <DrawingArea paint={isPaint} erase={isErased}/>
         {notes.map(el => {
           return <StickyNote
+            index={isPaint}
             key={el.id}
             noteID={el.id}
             color={el.color}

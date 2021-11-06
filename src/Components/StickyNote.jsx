@@ -50,6 +50,7 @@ function StickyNote(props) {
             <div className='header'>
                 <i onClick={() => props.handleDelete(props.noteID)} className="fas fa-trash"></i>
                 <input
+                    id={props.noteID}
                     type="color"
                     value={color}
                     onChange={(e) => {
@@ -57,6 +58,7 @@ function StickyNote(props) {
                         setStyle({ backgroundColor: e.target.value, transform: `translateX(${translate.x}px) translateY(${translate.y}px)` })
                     }}
                 />
+                <label htmlFor={props.noteID}><i className="fas fa-palette"></i></label>
             </div>
         <div className='body'
             onPointerDown={() => setIsDragging(true)}
