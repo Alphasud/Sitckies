@@ -7,7 +7,28 @@ function App() {
 
   const [notes, setNotes] = useState([]);
   const [updatedNotes, setUpdatedNotes] = useState([]);
-  
+  const [isSaved, setIsSaved] = useState(false);
+  const [background, setBackground] = useState();
+  const [updatedBackground, setUpdatedBackground] = useState('');
+  const [isBackgroundAdded, setIsbackgroundAdded] = useState(false);
+  const [style, setStyle] = useState();
+  const ID = background ? background.map(el => el.id) : 'no ID';
+
+  const fetchBackground = async () => {
+    let backgroundDataFromDb = [];
+        try {
+            const data = await db.collection('backgroundImage').get();
+            data.docs.map(el => {
+              let image = { ...el.data(), 'id': el.id };
+              backgroundDataFromDb.push(image);
+              return backgroundDataFromDb;
+            });
+          setBackground(backgroundDataFromDb);
+        } catch (error) {
+          console.log(error);
+        }
+  }
+
   const fetchData = async () => {
   let notesArray = [];
   let error;
@@ -26,8 +47,17 @@ function App() {
   }
 
   useEffect(() => {
-    fetchData()
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchBackground();
+  }, []);
+
+  useEffect(() => {
+    setStyle(background ? { backgroundImage: `url(${background.map(el => el.image)})` } : { backgroundImage: "url()" })
+  }, [background])
+
 
     useEffect(() => {
       setNotes(updatedNotes)
@@ -51,17 +81,27 @@ function App() {
           text: el.text,
         });
       });
+      db.collection('backgroundImage').doc(ID.toLocaleString()).update({image: updatedBackground});
+      setIsSaved(true)
     } catch (error) {
       console.log(error);
     }
   }
 
+  const getRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
   const handleCreateSticker = () => {
     const newSticker = {
-      top: 0,
-      left: 0,
-      color: '#000',
-      text: 'Write something...'
+      top: Math.random() * (500 - 50) + 50,
+      left: Math.random() * (500 - 50) + 50,
+      color: getRandomColor(),
+      text: ''
     };
     try {
       db.collection('stickies').add(newSticker);
@@ -71,17 +111,14 @@ function App() {
     fetchData();
   }
 
-  const handleDelete = (data, id) => {
+  const handleDelete = (id) => {
     console.log(id);
-    if (data === 'delete') {
       try {
         db.collection('stickies').doc(id).delete();
       } catch (error) {
           console.log(error);
       }
       fetchData();
-    }
-    
   }
 
   const handleClearAll = () => {
@@ -90,19 +127,32 @@ function App() {
       notes.map(el => {
         return db.collection('stickies').doc(el.id).delete();
       });
+      db.collection('backgroundImage').doc(ID.toLocaleString()).update({image: ''});
     } catch (error) {
       console.log(error);
     }
     fetchData();
+    fetchBackground();
   }
- 
+
   return (
     <div className="App">
       <h1>Welcome to Stickies !</h1>
       <button className="button" onClick={handleSave}>Save my sticker board</button>
       <button className="button" onClick={handleCreateSticker}>Add a new sticker</button>
       <button className="button" onClick={handleClearAll}>Clear canvas</button>
-      <div className="canvas">
+      <button className="button" onClick={() => setIsbackgroundAdded(true)}>Add Background Image to Canvas</button>
+      {isSaved ? <div className='save-msg'>
+        <i className="fas fa-times" onClick={() => setIsSaved(false)}></i>
+        Canvas Successfully Saved !
+      </div> : null}
+      {isBackgroundAdded ? <div className='background-msg'>
+        <i className="fas fa-times" onClick={() => setIsbackgroundAdded(false)}></i>
+        <input placeholder='Add an image link' type="text"
+          onChange={(e) => setUpdatedBackground(e.target.value)} />
+        <button className='button' onClick={() => { setStyle({ backgroundImage: `url(${updatedBackground})` }); setIsbackgroundAdded(false)}}>OKAY!</button>
+      </div> : null}
+      <div className="canvas" style={style}>
         {notes.map(el => {
           return <StickyNote
             key={el.id}

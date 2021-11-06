@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 
 function StickyNote(props) {
-
+    const max = 10;
+    const min = -10;
+    const tilt = `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`;
     const [isDragging, setIsDragging] = useState(false);
     const id = props.noteID;
     const [text, setText] = useState(props.text);
@@ -11,6 +13,7 @@ function StickyNote(props) {
             backgroundColor: props.color,
             top: props.top,
             left: props.left,
+            transform: tilt,
         });
     const [translate, setTranslate] = useState({
         x: props.left,
@@ -45,7 +48,7 @@ function StickyNote(props) {
         <div className='sticky-note'
             style={style}>
             <div className='header'>
-                <i onClick={() => props.handleDelete('delete', props.noteID)} className="fas fa-trash"></i>
+                <i onClick={() => props.handleDelete(props.noteID)} className="fas fa-trash"></i>
                 <input
                     type="color"
                     value={color}
@@ -57,10 +60,14 @@ function StickyNote(props) {
             </div>
         <div className='body'
             onPointerDown={() => setIsDragging(true)}
-            onPointerUp={() => setIsDragging(false)}
+                onPointerUp={() => {
+                    setIsDragging(false);
+                    setStyle({backgroundColor: color, transform: `translateX(${translate.x}px) translateY(${translate.y}px) rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
+                }}
             onPointerMove={(e) => isDragging ? handleDragMove(e) : null}    
         >
             <textarea
+                placeholder='write something...'
                 type="text"
                 value={text}
                 onChange={(e) =>  setText(e.target.value) }
