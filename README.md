@@ -37,6 +37,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 - Add/delete sticker image (initial image is random).
 - Change image on sticker image.
 - Save your canvas on a distant database (here I use Firestore from Firebase).
+- Share the URL with someone else. 
+- Working together in realtime, even-thought technically possible, is not optimized since you would need to reload manually frequentely to see what your pair did.
 
 ## Future features could include :
 - Authentication.
