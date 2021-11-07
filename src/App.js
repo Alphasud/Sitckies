@@ -40,7 +40,6 @@ function App() {
 
   const fetchData = async () => {
   let notesArray = [];
-  let error;
         try {
             const data = await db.collection('stickies').get();
             data.docs.map(el => {
@@ -49,9 +48,8 @@ function App() {
                 return  notesArray;
             });
             setNotes(notesArray)
-        } catch (e) {
-            error = 'error';
-            return error;
+        } catch (error) {
+          console.log(error);
         }
   }
 
