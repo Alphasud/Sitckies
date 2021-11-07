@@ -47,6 +47,7 @@ function StickyNote(props) {
     return (
         <div className='sticky-note'
             style={style}>
+            <i className="pin">📌</i>
             <div className='header'>
                 <i onClick={() => props.handleDelete(props.noteID)} className="fas fa-trash"></i>
                 <input

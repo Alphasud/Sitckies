@@ -7,7 +7,7 @@ const DrawingArea = (props) => {
     const [lines, setLines] = useState([]);
     const isDrawing = useRef(false);
     const [tool, setTool] = useState('pen');
-    console.log(lines);
+
     useEffect(() => {
         props.paint ? setTool('eraser') : setTool('pen');
         if (props.erase) setLines([]);

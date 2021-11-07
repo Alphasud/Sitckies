@@ -24,6 +24,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 - Change the color of a sticky note.
 - Draw anywhere on the canvas, switch pen color (default is black), select eraser tool to erase, or erase all drawing at once (for now, drawing cannot be saved)
 - Paste an image link to set it as the canvas background.
+- Add/delete sticker image (initial image is random).
+- Change image on sticker image.
 - Save your canvas on a distant database (here I use Firestore from Firebase).
 
 ## Future features could include :
@@ -31,6 +33,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 - 'Private' dashboard with all your canvas and personal info.
 - Creating multiple canvas.
 - Sharing canvas with other user.
+- Better UI, this one got a strong 2000's vibe^^
 
 
 
