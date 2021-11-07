@@ -60,7 +60,7 @@ const DrawingArea = (props) => {
                         <Line
                         key={i}
                         points={line.points}
-                        stroke="#000"
+                        stroke={props.penColor}
                         strokeWidth={5}
                         tension={0.5}
                         lineCap="round"

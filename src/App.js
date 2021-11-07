@@ -8,6 +8,7 @@ function App() {
 
   const [notes, setNotes] = useState([]);
   const [updatedNotes, setUpdatedNotes] = useState([]);
+  const [penColor, setPenColor] = useState('#000');
   const [isSaved, setIsSaved] = useState(false);
   const [isPaint, setIsPaint] = useState(false);
   const [isErased, setIsErased] = useState(false);
@@ -141,7 +142,15 @@ function App() {
   return (
     <div className="App">
       <h1>Welcome to Stickies !</h1>
-      <i className="fas fa-trash-alt brush" onMouseDown={() => setIsErased(true)} onMouseUp={() => setIsErased(false)}></i>
+      <i className="fas fa-trash-alt brush" onPointerDown={() => setIsErased(true)} onPointerUp={() => setIsErased(false)}></i>
+      <input
+        className='color-input'
+        id="penColor"
+        type="color"
+        value={penColor}
+        onChange={(e) => {setPenColor(e.target.value);}}
+     />
+      <label htmlFor='penColor'><i className="fas fa-palette brush"></i></label>
       <i className={isPaint ? "fas fa-paint-brush brush" : "fas fa-eraser brush"} onClick={() => setIsPaint(!isPaint)}></i>
       <button className="button" onClick={handleSave}><i class="far fa-save"></i> Save my sticker board</button>
       <button className="button" onClick={handleCreateSticker}><i class="fas fa-sticky-note"></i> Add a new sticker</button>
@@ -158,7 +167,7 @@ function App() {
         <button className='button' onClick={() => { setStyle({ backgroundImage: `url(${updatedBackground})` }); setIsbackgroundAdded(false)}}>OKAY!</button>
       </div> : null}
       <div className="canvas" style={style}>
-        <DrawingArea paint={isPaint} erase={isErased}/>
+        <DrawingArea paint={isPaint} erase={isErased} penColor={penColor}/>
         {notes.map(el => {
           return <StickyNote
             index={isPaint}

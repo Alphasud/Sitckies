@@ -6,6 +6,10 @@
 .App h1 {
   color: tomato;
 }
+.color-input {
+  pointer-events: none;
+  opacity: 0;
+}
 .canvas {
   z-index: 10;
   background-repeat: no-repeat;
@@ -48,14 +52,13 @@
   width: 100%;
 }
 .header input {
+  pointer-events: none;
   opacity: 0 !important;
   cursor: pointer;
   height: 1.25rem;
   width: 1.25rem;
   border-radius: 5px;
   border: none;
-  
-  /* padding: 0.2rem; */
   opacity: 0.5;
 }
 .header i {
