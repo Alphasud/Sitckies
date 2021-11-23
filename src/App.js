@@ -247,7 +247,6 @@ function App() {
         <DrawingArea paint={isPaint} erase={isErased} penColor={penColor}/>
         {notes.map(el => {
           return <StickyNote
-            /* index={isPaint} */
             key={el.id}
             noteID={el.id}
             color={el.color}
@@ -260,7 +259,6 @@ function App() {
         })}
         {stickerImage.map(el => {
           return <StickyImage
-            /* index={isPaint} */
             key={el.id}
             imageID={el.id}
             left={el.left}

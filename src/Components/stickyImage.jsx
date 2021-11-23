@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function StickyNote(props) {
+function StickyImage(props) {
     const max = 10;
     const min = -10;
     const tilt = `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`;
@@ -27,7 +27,8 @@ function StickyNote(props) {
     });
     setStyle({
         backgroundImage: `url(${image})`,
-        transform: `translateX(${translate.x}px) translateY(${translate.y}px)`
+        left: `${translate.x}px`,
+        top: `${translate.y}px`,
     });
   };
     
@@ -54,9 +55,9 @@ function StickyNote(props) {
                     id={props.imageID}
                     type="text"
                     value={image}
-                    onInput={(e) => {
+                    onChange={(e) => {
                         setImage(e.target.value);
-                        setStyle({ backgroundImage: `url(${e.target.value})`, transform: `translateX(${translate.x}px) translateY(${translate.y}px)` })
+                        setStyle({ backgroundImage: `url(${e.target.value})`, left: `${translate.x}px`, top: `${translate.y}px` })
                     }}
                 />
                 <label htmlFor={props.imageID} onClick={() => setIsOpen(!isOpen)}><i className="fas fa-images"></i></label>
@@ -65,7 +66,7 @@ function StickyNote(props) {
                 onPointerDown={() => setIsDragging(true) }
                 onPointerUp={() => {
                     setIsDragging(false);
-                    setStyle({backgroundImage: `url(${image})`, transform: `translateX(${translate.x}px) translateY(${translate.y}px) rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
+                    setStyle({backgroundImage: `url(${image})`, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
                 }}
             onPointerMove={(e) => isDragging ? handleDragMove(e) : null}    
         >
@@ -77,4 +78,4 @@ function StickyNote(props) {
     );
 }
 
-export default StickyNote;
+export default StickyImage;

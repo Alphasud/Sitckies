@@ -27,7 +27,8 @@ function StickyNote(props) {
     });
     setStyle({
         backgroundColor: color,
-        transform: `translateX(${translate.x}px) translateY(${translate.y}px)`
+        left: `${translate.x}px`,
+        top: `${translate.y}px`,
     });
   };
     
@@ -56,7 +57,7 @@ function StickyNote(props) {
                     value={color}
                     onChange={(e) => {
                         setColor(e.target.value);
-                        setStyle({ backgroundColor: e.target.value, transform: `translateX(${translate.x}px) translateY(${translate.y}px)` })
+                        setStyle({ backgroundColor: e.target.value, left: `${translate.x}px`,  top: `${translate.y}px` })
                     }}
                 />
                 <label htmlFor={props.noteID}><i className="fas fa-palette"></i></label>
@@ -65,7 +66,7 @@ function StickyNote(props) {
             onPointerDown={() => setIsDragging(true)}
                 onPointerUp={() => {
                     setIsDragging(false);
-                    setStyle({backgroundColor: color, transform: `translateX(${translate.x}px) translateY(${translate.y}px) rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
+                    setStyle({ backgroundColor: color, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
                 }}
             onPointerMove={(e) => isDragging ? handleDragMove(e) : null}    
         >
