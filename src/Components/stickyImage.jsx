@@ -4,10 +4,11 @@ function StickyImage(props) {
     const max = 10;
     const min = -10;
     const tilt = `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`;
-    const [isDragging, setIsDragging] = useState(false);
+    const [isDraggingImage, setIsDraggingImage] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const id = props.imageID;
-    const [image, setImage] = useState(props.image)
+    const [image, setImage] = useState(props.image);
+    const [text, setText] = useState(props.text);
     const [style, setStyle] = useState(
         {
             backgroundImage: `url(${props.image})`, 
@@ -37,18 +38,19 @@ function StickyImage(props) {
             top: translate.y,
             left: translate.x,
             image: image,
+            text: text,
             id: id
         }]
         props.handleImageObj(newObj)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [image, id, translate.y, translate.x]);
-
+    }, [image, id, translate.y, translate.x, text]);
     
+
     return (
-        <div className='sticky-image'
+        <div className='sticky-note'
             style={style}>
             <i className="pin">📌</i>
-            <div className='sticky-image-header'>
+            <div className='header'>
                 <i onClick={() => props.handleImageDelete(props.imageID)} className="fas fa-trash"></i>
                 <input
                     className={isOpen ? 'sticky-image-input open' : 'sticky-image-input'}
@@ -62,14 +64,21 @@ function StickyImage(props) {
                 />
                 <label htmlFor={props.imageID} onClick={() => setIsOpen(!isOpen)}><i className="fas fa-images"></i></label>
             </div>
-        <div className='sticky-image-body'
-                onPointerDown={() => setIsDragging(true) }
-                onPointerUp={() => {
-                    setIsDragging(false);
-                    setStyle({backgroundImage: `url(${image})`, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
-                }}
-            onPointerMove={(e) => isDragging ? handleDragMove(e) : null}    
-        >
+        <div className='body image'
+            onPointerDown={() => setIsDraggingImage(true) }
+            onPointerUp={() => {
+                setIsDraggingImage(false);
+                setStyle({backgroundImage: `url(${image})`, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
+            }}
+            onPointerMove={(e) => isDraggingImage ? handleDragMove(e) : null}    
+            >
+            <textarea
+            placeholder='write something...'
+            type="text"
+            value={text}
+            onChange={(e) =>  setText(e.target.value) }
+            >
+            </textarea>
         </div>
         </div>
         

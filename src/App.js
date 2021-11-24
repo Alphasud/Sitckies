@@ -129,6 +129,7 @@ function App() {
           top: el.top,
           left: el.left,
           image: el.image,
+          text: el.text,
         });
       });
       setIsSaved(true)
@@ -166,7 +167,8 @@ function App() {
     const newStickerImage = {
       top: Math.random() * (500 - 50) + 50,
       left: Math.random() * (500 - 50) + 50,
-      image: 'https://picsum.photos/200/300'
+      image: 'https://picsum.photos/200/300',
+      text: ''
     };
     try {
       db.collection('stickerImage').add(newStickerImage);
@@ -264,6 +266,7 @@ function App() {
             left={el.left}
             top={el.top}
             image={el.image}
+            text={el.text}
             handleImageObj={handleImageObj}
             handleImageDelete={handleImageDelete}
           />

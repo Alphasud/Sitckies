@@ -43,8 +43,8 @@ function StickyNote(props) {
         props.handleObj(newObj)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [color, id, translate.y, translate.x, text]);
-
     
+
     return (
         <div className='sticky-note'
             style={style}>
@@ -52,6 +52,7 @@ function StickyNote(props) {
             <div className='header'>
                 <i onClick={() => props.handleDelete(props.noteID)} className="fas fa-trash"></i>
                 <input
+                    className='header-input'
                     id={props.noteID}
                     type="color"
                     value={color}
@@ -64,10 +65,10 @@ function StickyNote(props) {
             </div>
         <div className='body'
             onPointerDown={() => setIsDragging(true)}
-                onPointerUp={() => {
-                    setIsDragging(false);
-                    setStyle({ backgroundColor: color, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
-                }}
+            onPointerUp={() => {
+                setIsDragging(false);
+                setStyle({ backgroundColor: color, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
+            }}
             onPointerMove={(e) => isDragging ? handleDragMove(e) : null}    
         >
             <textarea
