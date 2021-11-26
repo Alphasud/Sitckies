@@ -4,6 +4,9 @@ import StickyNote from './Components/StickyNote';
 import './App.css';
 import DrawingArea from './Components/DrawingArea';
 import StickyImage from './Components/stickyImage';
+import { collection, query, onSnapshot } from "firebase/firestore";
+
+
 
 function App() {
 
@@ -11,7 +14,7 @@ function App() {
   const [updatedNotes, setUpdatedNotes] = useState([]);
   const [stickerImage, setStickerImage] = useState([]);
   const [updatedStickerImage, setUpdatedStickerImage] = useState([]);
-  const [penColor, setPenColor] = useState('#000');
+  const [penColor, setPenColor] = useState('#000000');
   const [isSaved, setIsSaved] = useState(false);
   const [isPaint, setIsPaint] = useState(false);
   const [isErased, setIsErased] = useState(false);
@@ -20,6 +23,8 @@ function App() {
   const [isBackgroundAdded, setIsbackgroundAdded] = useState(false);
   const [style, setStyle] = useState();
   const ID = background ? background.map(el => el.id) : 'no ID';
+  const tiltImage = `rotate(5deg)`;
+  const tiltNotes = `rotate(-5deg)`;
 
 
   /* Those 3 functions fetch the data (stcikerImage, StickerNotes and background) */
@@ -38,41 +43,35 @@ function App() {
         }
   }
 
-  const fetchData = async () => {
-  let notesArray = [];
-        try {
-            const data = await db.collection('stickies').get();
-            data.docs.map(el => {
-                let notes = { ...el.data(), 'id': el.id}
-                notesArray.push(notes);
-                return  notesArray;
-            });
-            setNotes(notesArray)
-        } catch (error) {
-          console.log(error);
-        }
-  }
+  const fetchStickerNotes = () => {
+    const q = query(collection(db, 'stickies'));
+    onSnapshot(q, (snapshot) => {
+      const stickies = [];
+      snapshot.forEach((doc) => {
+        let notes = {...doc.data(), 'id': doc.id}
+        stickies.push(notes)
+      })
+      setNotes(stickies);
+    })
+  } 
 
-  const fetchStickerImages = async () => {
-  let imageArray = [];
-        try {
-            const data = await db.collection('stickerImage').get();
-            data.docs.map(el => {
-                let stickerImage = { ...el.data(), 'id': el.id}
-                imageArray.push(stickerImage);
-                return  imageArray;
-            });
-            setStickerImage(imageArray)
-        } catch (error) {
-          console.log(error);
-        }
+  const fetchStickerImages = () => {
+    const q = query(collection(db, 'stickerImage'));
+      onSnapshot(q, (querySnapshot) => {
+        const stickerImage = [];
+        querySnapshot.forEach((doc) => {
+          let images = {...doc.data(), 'id': doc.id}
+          stickerImage.push(images)
+        })
+        setStickerImage(stickerImage);
+      })
   }
 
   /* Fetch all data on mount */
   useEffect(() => {
-    fetchData();
     fetchStickerImages();
     fetchBackground();
+    fetchStickerNotes();
   }, []);
 
   /* set the updated background to the value of the background stored in db,
@@ -85,15 +84,7 @@ function App() {
   /* Update the state when user updates image, background or note */
   useEffect(() => {
     setStyle(background ? { backgroundImage: `url(${background.map(el => el.image)})` } : { backgroundImage: "url()" })
-  }, [background])
-
-  useEffect(() => {
-      setNotes(updatedNotes)
-  }, [updatedNotes])
-  
-  useEffect(() => {
-      setStickerImage(updatedStickerImage)
-  }, [updatedStickerImage])
+  }, [background]);
 
 /* Handles the newly note object updated */
   const handleObj = (data) => {
@@ -103,6 +94,18 @@ function App() {
     });
     setUpdatedNotes(result);
   }
+  useEffect(() => {
+    updatedNotes.map(el => {
+      return db.collection('stickies').doc(el.id).update({
+        top: el.top,
+        left: el.left,
+        color: el.color,
+        text: el.text,
+      });
+    });
+  }, [updatedNotes]);
+  
+  
   /* Handles the newly sticker image object updated */
   const handleImageObj = (data) => {
     const result = stickerImage.map(el => {
@@ -111,20 +114,8 @@ function App() {
     });
     setUpdatedStickerImage(result);
   }
-
-  /* Handles saving */
-  const handleSave = () => {
-    try {
-      notes.map(el => {
-        return db.collection('stickies').doc(el.id).update({
-          top: el.top,
-          left: el.left,
-          color: el.color,
-          text: el.text,
-        });
-      });
-      db.collection('backgroundImage').doc(ID.toLocaleString()).update({ image: updatedBackground });
-      stickerImage.map(el => {
+  useEffect(() => {
+      updatedStickerImage.map(el => {
         return db.collection('stickerImage').doc(el.id).update({
           top: el.top,
           left: el.left,
@@ -132,6 +123,12 @@ function App() {
           text: el.text,
         });
       });
+  }, [updatedStickerImage])
+
+  /* Handles saving */
+  const handleSave = () => {
+    try {
+      db.collection('backgroundImage').doc(ID.toLocaleString()).update({ image: updatedBackground });
       setIsSaved(true)
     } catch (error) {
       console.log(error);
@@ -160,7 +157,7 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-    fetchData();
+    fetchStickerNotes();
   }
    /* Handles the creation of a new sticker image */
   const handleCreateStickerImage = () => {
@@ -182,10 +179,11 @@ function App() {
     console.log(id);
       try {
         db.collection('stickies').doc(id).delete();
+        fetchStickerNotes();
       } catch (error) {
           console.log(error);
       }
-      fetchData();
+    fetchStickerNotes();
   }
   /* Handles the deletion of a sticker image */
   const handleImageDelete = (id) => {
@@ -211,7 +209,8 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-    fetchData();
+
+    fetchStickerNotes();
     fetchStickerImages();
     fetchBackground();
   }
@@ -255,6 +254,7 @@ function App() {
             left={el.left}
             top={el.top}
             text={el.text}
+            tilt={tiltNotes}
             handleObj={handleObj}
             handleDelete={handleDelete}
           />
@@ -267,6 +267,7 @@ function App() {
             top={el.top}
             image={el.image}
             text={el.text}
+            tilt={tiltImage}
             handleImageObj={handleImageObj}
             handleImageDelete={handleImageDelete}
           />

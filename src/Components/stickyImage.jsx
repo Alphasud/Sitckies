@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 
 function StickyImage(props) {
-    const max = 10;
-    const min = -10;
-    const tilt = `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`;
     const [isDraggingImage, setIsDraggingImage] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const id = props.imageID;
@@ -14,37 +11,41 @@ function StickyImage(props) {
             backgroundImage: `url(${props.image})`, 
             top: props.top,
             left: props.left,
-            transform: tilt,
+            transform: props.tilt,
         });
-    const [translate, setTranslate] = useState({
+    const [position, setPosition] = useState({
         x: props.left,
         y: props.top
     });
 
   const handleDragMove = (e) => {
-    setTranslate({
-        x: translate.x + e.movementX,
-        y: translate.y + e.movementY
-    });
-    setStyle({
-        backgroundImage: `url(${image})`,
-        left: `${translate.x}px`,
-        top: `${translate.y}px`,
+    setPosition({
+        x: position.x + e.movementX,
+        y: position.y + e.movementY
     });
   };
     
     useEffect(() => {
         const newObj = [{
-            top: translate.y,
-            left: translate.x,
+            top: position.y,
+            left: position.x,
             image: image,
             text: text,
             id: id
         }]
         props.handleImageObj(newObj)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [image, id, translate.y, translate.x, text]);
+    }, [image, id, position.y, position.x, text]);
     
+    useEffect(() => {
+        setStyle({
+            backgroundImage: `url(${props.image})`,
+            left: `${props.left}px`,
+            top: `${props.top}px`,
+            transform: props.tilt,
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.top, props.left, props.image]);
 
     return (
         <div className='sticky-note'
@@ -59,7 +60,6 @@ function StickyImage(props) {
                     value={image}
                     onChange={(e) => {
                         setImage(e.target.value);
-                        setStyle({ backgroundImage: `url(${e.target.value})`, left: `${translate.x}px`, top: `${translate.y}px` })
                     }}
                 />
                 <label htmlFor={props.imageID} onClick={() => setIsOpen(!isOpen)}><i className="fas fa-images"></i></label>
@@ -68,14 +68,13 @@ function StickyImage(props) {
             onPointerDown={() => setIsDraggingImage(true) }
             onPointerUp={() => {
                 setIsDraggingImage(false);
-                setStyle({backgroundImage: `url(${image})`, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
             }}
             onPointerMove={(e) => isDraggingImage ? handleDragMove(e) : null}    
             >
             <textarea
             placeholder='write something...'
             type="text"
-            value={text}
+            value={props.text}
             onChange={(e) =>  setText(e.target.value) }
             >
             </textarea>

@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 
 function StickyNote(props) {
-    const max = 10;
-    const min = -10;
-    const tilt = `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`;
     const [isDragging, setIsDragging] = useState(false);
     const id = props.noteID;
     const [text, setText] = useState(props.text);
@@ -13,38 +10,48 @@ function StickyNote(props) {
             backgroundColor: props.color,
             top: props.top,
             left: props.left,
-            transform: tilt,
+            transform: props.tilt,
         });
-    const [translate, setTranslate] = useState({
+    const [position, setPosition] = useState({
         x: props.left,
         y: props.top
     });
 
   const handleDragMove = (e) => {
-    setTranslate({
-        x: translate.x + e.movementX,
-        y: translate.y + e.movementY
-    });
-    setStyle({
-        backgroundColor: color,
-        left: `${translate.x}px`,
-        top: `${translate.y}px`,
+    setPosition({
+        x: position.x + e.movementX,
+        y: position.y + e.movementY
     });
   };
     
     useEffect(() => {
         const newObj = [{
-            top: translate.y,
-            left: translate.x,
+            top: position.y,
+            left: position.x,
             color: color,
             text: text,
             id: id
         }]
         props.handleObj(newObj)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [color, id, translate.y, translate.x, text]);
-    
+    }, [color, id, position.y, position.x, text]);
 
+    useEffect(() => {
+        setStyle({
+            backgroundColor: props.color,
+            left: `${props.left}px`,
+            top: `${props.top}px`,
+            transform: props.tilt,
+        });  
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.top, props.left, props.color]);
+
+    const handleInput = (e) => {
+        setText(e.target.value)
+    }
+    const handleColor = (e) => {
+        setColor(e.target.value)
+    }
     return (
         <div className='sticky-note'
             style={style}>
@@ -56,26 +63,22 @@ function StickyNote(props) {
                     id={props.noteID}
                     type="color"
                     value={color}
-                    onChange={(e) => {
-                        setColor(e.target.value);
-                        setStyle({ backgroundColor: e.target.value, left: `${translate.x}px`,  top: `${translate.y}px` })
-                    }}
+                    onChange={handleColor}
                 />
                 <label htmlFor={props.noteID}><i className="fas fa-palette"></i></label>
             </div>
         <div className='body'
             onPointerDown={() => setIsDragging(true)}
-            onPointerUp={() => {
-                setIsDragging(false);
-                setStyle({ backgroundColor: color, left: `${translate.x}px`, top: `${translate.y}px`, transform: `rotate(${Math.floor(Math.random() * (max - min + 1)) + min}deg)`})
-            }}
+            onPointerUp={() => 
+                setIsDragging(false) 
+            }
             onPointerMove={(e) => isDragging ? handleDragMove(e) : null}    
         >
             <textarea
                 placeholder='write something...'
                 type="text"
-                value={text}
-                onChange={(e) =>  setText(e.target.value) }
+                value={props.text}
+                onInput={handleInput}
              >
             </textarea>
         </div>
